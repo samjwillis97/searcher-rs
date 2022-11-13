@@ -6,10 +6,12 @@ use fuzzy_matcher::FuzzyMatcher;
 
 use crate::cmd;
 use crate::config;
+use crate::config::FileSettings;
 use calamine::{open_workbook, DataType, Reader, Xlsx};
 
 #[derive(Debug)]
 pub struct InnerData {
+    pub id: String,
     pub data: HashMap<String, HashMap<String, String>>,
 }
 
@@ -23,7 +25,7 @@ pub fn search_service(
 ) -> Vec<cmd::SearchResult> {
     println!("Searching {}", term);
     println!("{:#?}", service.name);
-    get_service_data(&service.file_settings, search_state);
+    get_service_data(&service, search_state);
     return search_data(term, search_state);
 }
 
@@ -69,17 +71,24 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
     return search_results;
 }
 
-fn parse_xlsx_file(service: &config::FileSettings, search_state: &tauri::State<DataState>) {
+fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::State<DataState>) {
     // This function should
     // attempt to open a file
     // CSV etc.
     // create a map with the row and corresponding search value
     // TODO: THIS SHOULD BE IN MEMORY AND ONLY CALCULATED ON THE FIRST SEARCH
-    let mut excel: Xlsx<_> = open_workbook(service.source_file.to_string()).unwrap();
-    if let Some(Ok(r)) = excel.worksheet_range(&service.sheet.to_string()) {
+    let mut excel: Xlsx<_> = open_workbook(service.file_settings.source_file.to_string()).unwrap();
+    let sheet_name = &service
+        .file_settings
+        .sheet
+        .as_ref()
+        .unwrap_or(&FileSettings::default().sheet.unwrap())
+        .to_string();
+
+    if let Some(Ok(r)) = excel.worksheet_range(&sheet_name) {
         let mut search_keys: Vec<String> = Vec::new();
-        for field in &service.fields {
-            if field.search {
+        for field in &service.file_settings.fields {
+            if field.search.unwrap_or(false) {
                 search_keys.push(field.name.to_string());
             }
         }
@@ -89,7 +98,11 @@ fn parse_xlsx_file(service: &config::FileSettings, search_state: &tauri::State<D
 
         let mut i = 0;
         for row in r.rows() {
-            if i == service.rows_to_skip {
+            if i == service
+                .file_settings
+                .rows_to_skip
+                .unwrap_or(FileSettings::default().rows_to_skip.unwrap())
+            {
                 let mut col_index = 0;
                 for value in row {
                     match *value {
@@ -101,7 +114,11 @@ fn parse_xlsx_file(service: &config::FileSettings, search_state: &tauri::State<D
                     col_index += 1;
                 }
             }
-            if i > service.rows_to_skip {
+            if i > service
+                .file_settings
+                .rows_to_skip
+                .unwrap_or(FileSettings::default().rows_to_skip.unwrap())
+            {
                 let mut row_map: HashMap<String, String> = HashMap::new();
                 let mut search_key: String = "".to_owned();
 
@@ -122,16 +139,19 @@ fn parse_xlsx_file(service: &config::FileSettings, search_state: &tauri::State<D
             }
             i += 1;
         }
-        let data = InnerData { data: row_data_map };
+        let data = InnerData {
+            id: service.name.to_string(),
+            data: row_data_map,
+        };
         let mut search_state_guard = search_state.0.lock().unwrap();
         *search_state_guard = data;
     }
 }
 
-fn get_service_data(service: &config::FileSettings, search_state: &tauri::State<DataState>) {
-    if !std::path::Path::new(&service.source_file).exists() {
+fn get_service_data(service: &config::SearchServiceConfig, search_state: &tauri::State<DataState>) {
+    if !std::path::Path::new(&service.file_settings.source_file).exists() {
         // TODO: Send an error event to the UI
-        println!("File does not exist {:}", service.source_file);
+        println!("File does not exist {:}", service.file_settings.source_file);
         return;
     }
 
@@ -139,7 +159,7 @@ fn get_service_data(service: &config::FileSettings, search_state: &tauri::State<
     let state_guard = search_state.0.lock().unwrap();
     if state_guard.data.len() == 0 {
         drop(state_guard);
-        match service.file_type.as_str() {
+        match service.file_settings.file_type.as_str() {
             "xlsx" => parse_xlsx_file(service, search_state),
             _ => println!("Do not know file type"),
         };

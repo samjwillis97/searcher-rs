@@ -94,18 +94,20 @@ fn main() {
             // Load user settings
             app.manage(config.clone());
             // Set Initial value for state
-            app.manage(DataState( Mutex::new(InnerData{ data: HashMap::new()}) ));
+            app.manage(DataState( Mutex::new(InnerData{ id: "".to_string(), data: HashMap::new()}) ));
 
             // Register global shortcut
+            let user_settings = config.user_settings.unwrap_or(config::UserSettings::default());
+            let shortcut = user_settings.shortcut.unwrap_or(config::UserSettings::default().shortcut.unwrap());
             let window_clone = window.clone();
             let mut shortcuts = window.app_handle().global_shortcut_manager();
-            match shortcuts.is_registered(&config.user_settings.shortcut) {
+            match shortcuts.is_registered(&shortcut) {
                 Ok(is_registered) => {
                     if !is_registered
                     {
-                        println!("Registering {} as shortcut", &config.user_settings.shortcut);
+                        println!("Registering {} as shortcut", &shortcut);
                         if let Err(e) = shortcuts
-                            .register(&config.user_settings.shortcut, move || {
+                            .register(&shortcut, move || {
                                 let window = window_clone.clone();
                                 let _ = window.is_visible()
                                     .map(|is_visible| {
@@ -122,6 +124,7 @@ fn main() {
                 }
                 Err(e) => window::alert(&window_clone, "Error registering global shortcut", &format!("{}", e))
             }
+
             Ok(())
         })
         .build(ctx)

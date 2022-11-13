@@ -7,13 +7,14 @@ use std::{fs, path::PathBuf};
 // TODO: Automagically reload
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Config {
-    pub user_settings: UserSettings,
+    pub user_settings: Option<UserSettings>,
     pub search_services: Vec<SearchServiceConfig>,
 }
+
 impl Default for Config {
     fn default() -> Self {
         Config {
-            user_settings: UserSettings::default(),
+            user_settings: Some(UserSettings::default()),
             search_services: Vec::new(),
         }
     }
@@ -21,18 +22,18 @@ impl Default for Config {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct UserSettings {
-    pub entries_to_show: u16,
-    pub fzf_algorithm: String,
-    pub similarity: f32,
-    pub shortcut: String,
+    pub entries_to_show: Option<u16>,
+    pub fzf_algorithm: Option<String>,
+    pub similarity: Option<f32>,
+    pub shortcut: Option<String>,
 }
 impl Default for UserSettings {
     fn default() -> Self {
         UserSettings {
-            entries_to_show: 5,
-            fzf_algorithm: "jaro-winkler".to_string(),
-            similarity: 0.7,
-            shortcut: "CmdOrCtrl+Shift+/".to_string(),
+            entries_to_show: Some(5),
+            fzf_algorithm: Some("jaro-winkler".to_string()),
+            similarity: Some(0.7),
+            shortcut: Some("CmdOrCtrl+Shift+/".to_string()),
         }
     }
 }
@@ -40,29 +41,63 @@ impl Default for UserSettings {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct SearchServiceConfig {
     pub name: String,
-    pub shortcut: String,
-    pub algorithm: String,
-    pub similarity: f32,
+    pub shortcut: Option<String>,
+    pub algorithm: Option<String>,
+    pub similarity: Option<f32>,
     pub file_settings: FileSettings,
+}
+impl Default for SearchServiceConfig {
+    fn default() -> Self {
+        SearchServiceConfig {
+            name: "Default Service".to_string(),
+            shortcut: None,
+            algorithm: None,
+            similarity: Some(0.3),
+            file_settings: FileSettings::default(),
+        }
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct FileSettings {
     pub source_file: String,
     pub file_type: String,
-    pub sheet: String,
-    pub rows_to_skip: i32,
+    pub sheet: Option<String>,
+    pub rows_to_skip: Option<i32>,
     pub fields: Vec<FieldConfig>,
+}
+impl Default for FileSettings {
+    fn default() -> Self {
+        FileSettings {
+            source_file: "data.xlsx".to_string(),
+            file_type: "xlsx".to_string(),
+            sheet: Some("Sheet 1".to_string()),
+            rows_to_skip: Some(0),
+            fields: Vec::new(),
+        }
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct FieldConfig {
     pub name: String,
-    pub search: bool,
-    pub display_name: String,
-    pub display: bool,
-    pub shortcut: String,
-    pub qr_template: String,
+    pub search: Option<bool>,
+    pub display_name: Option<String>,
+    pub display: Option<bool>,
+    pub shortcut: Option<String>,
+    pub qr_template: Option<String>,
+}
+impl Default for FieldConfig {
+    fn default() -> Self {
+        FieldConfig {
+            name: "".to_string(),
+            search: Some(false),
+            display_name: None,
+            display: Some(false),
+            shortcut: None,
+            qr_template: None,
+        }
+    }
 }
 
 // TODO: Load Services
@@ -106,6 +141,16 @@ impl Config {
     }
 
     pub fn prefs_file() -> PathBuf {
-        return Self::prefs_dir().join("settings.yaml");
+        let mut path = PathBuf::new();
+        path.push("/Users");
+        path.push("samwillis");
+        path.push("projects");
+        path.push("searcher-rs");
+        path.push("testing");
+        path.push("settings");
+        path.set_extension("yaml");
+        println!("Preference path: {:?}", path);
+        return path;
+        // return Self::prefs_dir().join("settings.yaml");
     }
 }

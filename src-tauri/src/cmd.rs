@@ -86,17 +86,39 @@ pub fn open_service(app: AppHandle, window: tauri::Window, service: &str) {
 }
 
 #[tauri::command]
-pub fn get_info(id: &str) -> Vec<Field> {
-    println!("Get {}", id);
+pub fn get_info(
+    id: &str,
+    config: tauri::State<config::Config>,
+    search_state: tauri::State<searcher::DataState>,
+) -> Vec<Field> {
     let mut vec = Vec::new();
-    vec.push(Field {
-        name: "Field Name".to_string(),
-        value: "Field Value".to_string(),
-        shortcut: Shortcut {
-            modifier: "cmd".to_string(),
-            key: "1".to_string(),
-        },
-    });
+    let guarded_state = search_state.0.lock().unwrap();
+
+    if guarded_state.data.contains_key(id) {
+        let row = guarded_state.data.get(id).unwrap();
+
+        for conf in &config.search_services {
+            if conf.name == id {
+                for field in &conf.file_settings.fields {
+                    if field.display.unwrap_or(false) && row.contains_key(&field.name) {
+                        vec.push(Field {
+                            name: field
+                                .display_name
+                                .as_ref()
+                                .unwrap_or(&field.name)
+                                .to_string(),
+                            value: row.get(&field.name).unwrap().to_string(),
+                            shortcut: Shortcut {
+                                modifier: "".to_string(),
+                                key: "".to_string(),
+                            },
+                        })
+                    }
+                }
+            }
+            break;
+        }
+    }
 
     return vec;
 }

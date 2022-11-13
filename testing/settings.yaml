@@ -1,0 +1,19 @@
+user_settings:
+  entries_to_show: 5
+  fzf_algorithm: jaro-winkler
+  similarity: 0.7
+search_services:
+  - name: Client Info
+    shortcut: a
+    algorithm: jaro-winkler
+    similarity: 0.8
+    file_settings:
+      source_file: /Users/samwillis/Projects/searcher-rs/testing/data.xlsx
+      file_type: xlsx
+      sheet: My Data
+      rows_to_skip: 3
+      fields:
+        - name: Code
+          display: true
+          display_name: Code
+          shortcut: 1
