@@ -118,21 +118,21 @@ fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::
                     .unwrap(),
             )
             .enumerate()
-            .for_each(|(i, v)| {
+            .for_each(|(i, row)| {
                 if i == 0 {
-                    field_locations = get_xlsx_columns(v);
+                    field_locations = get_xlsx_columns(row);
                     return;
                 }
 
                 let mut row_map: HashMap<String, String> = HashMap::new();
                 let mut search_key: String = "".to_owned();
 
-                field_locations.to_owned().into_iter().for_each(|x| {
-                    let value = xlsx_datatype_to_string(&v[x.1 as usize]);
-                    if search_keys.contains(&x.0) {
+                field_locations.to_owned().into_iter().for_each(|field| {
+                    let value = xlsx_datatype_to_string(&row[field.1 as usize]);
+                    if search_keys.contains(&field.0) {
                         search_key.push_str(&value);
                     }
-                    row_map.insert(x.0.to_string(), value);
+                    row_map.insert(field.0.to_string(), value);
                 });
 
                 if search_key != "" {
