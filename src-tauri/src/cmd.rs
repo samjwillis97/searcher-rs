@@ -59,7 +59,6 @@ pub fn search(
             };
         }
     } else {
-        println!("Not implemented");
         println!("Searching {} Service", id);
         for service in &config.search_services {
             if id == service.name {
@@ -94,31 +93,34 @@ pub fn get_info(
     let mut vec = Vec::new();
     let guarded_state = search_state.0.lock().unwrap();
 
-    if guarded_state.data.contains_key(id) {
-        let row = guarded_state.data.get(id).unwrap();
+    let row = match guarded_state.data.get(id) {
+        Some(v) => v,
+        None => return vec,
+    };
 
-        for conf in &config.search_services {
-            if conf.name == id {
-                for field in &conf.file_settings.fields {
-                    if field.display.unwrap_or(false) && row.contains_key(&field.name) {
-                        vec.push(Field {
-                            name: field
-                                .display_name
-                                .as_ref()
-                                .unwrap_or(&field.name)
-                                .to_string(),
-                            value: row.get(&field.name).unwrap().to_string(),
-                            shortcut: Shortcut {
-                                modifier: "".to_string(),
-                                key: "".to_string(),
-                            },
-                        })
-                    }
-                }
-            }
-            break;
+    let matching_config = match config
+        .search_services
+        .iter()
+        .find(|v| v.name == guarded_state.id)
+    {
+        Some(v) => v,
+        None => return vec,
+    };
+
+    matching_config.file_settings.fields.iter().for_each(|v| {
+        if !v.display.unwrap_or(false) || !row.contains_key(&v.name) {
+            return;
         }
-    }
+
+        vec.push(Field {
+            name: v.display_name.as_ref().unwrap_or(&v.name).to_string(),
+            value: row.get(&v.name).unwrap().to_string(),
+            shortcut: Shortcut {
+                modifier: "".to_string(),
+                key: "".to_string(),
+            },
+        })
+    });
 
     return vec;
 }

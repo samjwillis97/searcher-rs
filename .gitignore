@@ -12,3 +12,5 @@ binaries
 .idea/
 .vscode/
 
+~$*.xlsx
+

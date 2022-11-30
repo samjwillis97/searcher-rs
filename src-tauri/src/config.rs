@@ -5,7 +5,7 @@ use serde_yaml;
 use std::{fs, path::PathBuf};
 
 // TODO: Automagically reload
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Config {
     pub user_settings: Option<UserSettings>,
     pub search_services: Vec<SearchServiceConfig>,

@@ -11,9 +11,31 @@ search_services:
       source_file: /Users/samwillis/Projects/searcher-rs/testing/data.xlsx
       file_type: xlsx
       sheet: My Data
-      rows_to_skip: 3
       fields:
         - name: Code
           display: true
-          display_name: Code
+        - name: BusPhone
+          display: true
+          display_name: Business Phone
+        - name: BusName
+          display: true
+          search: true
+          display_name: Business name
+          shortcut: 1
+  - name: Client Info - Code
+    shortcut: b
+    algorithm: jaro-winkler
+    similarity: 0.8
+    file_settings:
+      source_file: /Users/samwillis/Projects/searcher-rs/testing/data.xlsx
+      file_type: xlsx
+      sheet: Sheet2
+      rows_to_skip: 8
+      fields:
+        - name: Code
+          display: true
+          # search: true # TODO: This doesn't work
+        - name: BusName
+          display: true
+          search: true
           shortcut: 1

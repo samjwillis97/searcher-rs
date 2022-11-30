@@ -23,8 +23,6 @@ pub fn search_service(
     service: &config::SearchServiceConfig,
     search_state: &tauri::State<DataState>,
 ) -> Vec<cmd::SearchResult> {
-    println!("Searching {}", term);
-    println!("{:#?}", service.name);
     get_service_data(&service, search_state);
     return search_data(term, search_state);
 }
@@ -71,12 +69,26 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
     return search_results;
 }
 
+fn xlsx_datatype_to_string(value: &DataType) -> String {
+    match *value {
+        DataType::String(ref s) => return s.to_string(),
+        DataType::Int(ref s) => return s.to_string(),
+        DataType::Float(ref s) => return s.to_string(),
+        DataType::DateTime(ref s) => return s.to_string(),
+        DataType::Bool(ref s) => return s.to_string(),
+        _ => return "".to_string(),
+    }
+}
+
+fn get_xlsx_columns(row: &[DataType]) -> Vec<(String, i32)> {
+    let mut columns: Vec<(String, i32)> = Vec::new();
+    row.into_iter().enumerate().for_each(|(i, v)| {
+        columns.push((v.to_string(), i.try_into().unwrap()));
+    });
+    return columns;
+}
+
 fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::State<DataState>) {
-    // This function should
-    // attempt to open a file
-    // CSV etc.
-    // create a map with the row and corresponding search value
-    // TODO: THIS SHOULD BE IN MEMORY AND ONLY CALCULATED ON THE FIRST SEARCH
     let mut excel: Xlsx<_> = open_workbook(service.file_settings.source_file.to_string()).unwrap();
     let sheet_name = &service
         .file_settings
@@ -96,49 +108,38 @@ fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::
         let mut field_locations: Vec<(String, i32)> = Vec::new();
         let mut row_data_map: HashMap<String, HashMap<String, String>> = HashMap::new();
 
-        let mut i = 0;
-        for row in r.rows() {
-            if i == service
-                .file_settings
-                .rows_to_skip
-                .unwrap_or(FileSettings::default().rows_to_skip.unwrap())
-            {
-                let mut col_index = 0;
-                for value in row {
-                    match *value {
-                        DataType::String(ref s) => {
-                            field_locations.push((s.to_string(), col_index));
-                        }
-                        _ => println!("else"),
-                    }
-                    col_index += 1;
+        r.rows()
+            .skip(
+                service
+                    .file_settings
+                    .rows_to_skip
+                    .unwrap_or(FileSettings::default().rows_to_skip.unwrap())
+                    .try_into()
+                    .unwrap(),
+            )
+            .enumerate()
+            .for_each(|(i, v)| {
+                if i == 0 {
+                    field_locations = get_xlsx_columns(v);
+                    return;
                 }
-            }
-            if i > service
-                .file_settings
-                .rows_to_skip
-                .unwrap_or(FileSettings::default().rows_to_skip.unwrap())
-            {
+
                 let mut row_map: HashMap<String, String> = HashMap::new();
                 let mut search_key: String = "".to_owned();
 
-                for field in &field_locations {
-                    let row_value = match row[field.1 as usize] {
-                        DataType::String(ref s) => s.to_string(),
-                        _ => "".to_string(),
-                    };
-                    if search_keys.contains(&field.0) {
-                        search_key.push_str(&row_value);
+                field_locations.to_owned().into_iter().for_each(|x| {
+                    let value = xlsx_datatype_to_string(&v[x.1 as usize]);
+                    if search_keys.contains(&x.0) {
+                        search_key.push_str(&value);
                     }
-                    row_map.insert(field.0.to_string(), row_value);
-                }
+                    row_map.insert(x.0.to_string(), value);
+                });
 
                 if search_key != "" {
                     row_data_map.insert(search_key, row_map);
                 }
-            }
-            i += 1;
-        }
+            });
+
         let data = InnerData {
             id: service.name.to_string(),
             data: row_data_map,
@@ -160,7 +161,10 @@ fn get_service_data(service: &config::SearchServiceConfig, search_state: &tauri:
     if state_guard.data.len() == 0 {
         drop(state_guard);
         match service.file_settings.file_type.as_str() {
-            "xlsx" => parse_xlsx_file(service, search_state),
+            "xlsx" => {
+                println!("Parsing XLSX File");
+                parse_xlsx_file(service, search_state);
+            }
             _ => println!("Do not know file type"),
         };
     }
