@@ -1,6 +1,7 @@
 # Tauri + Svelte + Typescript
 
-A lot of this project is code from Spyglass, as it was the perfect base to start from handling most of the things I was after.
+A lot of this project is code from Spyglass, as it was the perfect base to start
+from handling most of the things I was after.
 
 ## Goals
 
@@ -11,8 +12,7 @@ A lot of this project is code from Spyglass, as it was the perfect base to start
 - initial search will search the configs
 - it will also accept hotkeys as defined in the config
 - Pressing escape/shortcut in the search window will close it and clear search
-    - effectively resets the search
-
+  - effectively resets the search
 
 ## TODO
 
@@ -26,17 +26,15 @@ A lot of this project is code from Spyglass, as it was the perfect base to start
 ## Config
 
 - `config.yaml` contains main config like
-    - `entries_to_show`
-    - `fzf_algorithm`
-    - `simliarty`
-    - `shortcut`
+  - `entries_to_show`
+  - `fzf_algorithm`
+  - `simliarty`
+  - `shortcut`
 - `services/` contains a set of search configurations for the program
 - `services/<unique_service_name>.yaml` service configuration
-    - `name`
-    - etc.
-
+  - `name`
+  - etc.
 
 ## Run
 
 `pnpm tauri dev`
-

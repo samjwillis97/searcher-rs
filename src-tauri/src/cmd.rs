@@ -116,8 +116,8 @@ pub fn get_info(
             name: v.display_name.as_ref().unwrap_or(&v.name).to_string(),
             value: row.get(&v.name).unwrap().to_string(),
             shortcut: Shortcut {
-                modifier: "".to_string(),
-                key: "".to_string(),
+                modifier: "CMD".to_string(),
+                key: v.to_owned().shortcut.unwrap_or("".to_string()),
             },
         })
     });
