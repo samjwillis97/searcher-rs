@@ -1,18 +1,21 @@
-<style>
-</style>
-
 <script lang="ts">
+import { get_config, type Config } from '../services/config'
+
 import { openInfo, openService } from '../services/commands'
 
-import type { SearchResult, Shortcut } from '../services/searcher'
-import { ModifierKey } from '../services/searcher'
+import type { SearchResult } from '../services/searcher'
 
 export let service: string = ''
-export let item: SearchResult = null
-export let shortcut: Shortcut = null
+export let item: SearchResult
+export let shortcut: string | undefined
 export let selected: boolean = false
 
 $: htmlString = generateHtmlString(item)
+
+let config: Config
+get_config(false).then((v) => {
+  config = v
+})
 
 async function handleClick(event: MouseEvent) {
   //@ts-ignore
@@ -39,6 +42,8 @@ function generateHtmlString(item: SearchResult): String {
     })
     .join('')
 }
+console.log(item)
+console.log(shortcut)
 </script>
 
 {#if item}
@@ -56,22 +61,16 @@ function generateHtmlString(item: SearchResult): String {
       </div>
 
       <div class="flex">
-        {#if shortcut?.modifier}
-          <div
-            class="mr-1 rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
-          >
-            {#if shortcut.modifier === ModifierKey.Cmd}
-              <p>CMD</p>
-            {:else if shortcut.modifier === ModifierKey.Ctrl}
-              <p>CTRL</p>
-            {/if}
-          </div>
-        {/if}
-        {#if shortcut?.key}
+        {#if shortcut}
           <div
             class="rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
           >
-            <p>{shortcut.key}</p>
+            <p>{config?.app_settings?.modifier_key}</p>
+          </div>
+          <div
+            class="ml-1.5 rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
+          >
+            <p>{shortcut}</p>
           </div>
         {/if}
       </div>

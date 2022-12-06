@@ -3,12 +3,12 @@ import { get_config, type Config } from '../services/config'
 
 import { listen } from '@tauri-apps/api/event'
 import { resizeWindow } from '../services/commands'
-import type { SearchResult, Shortcut } from '../services/searcher'
+import type { SearchResult } from '../services/searcher'
 import ListItem from './ListItem.svelte'
 
 export let service: string = ''
 export let items: SearchResult[] = []
-export let shortcuts: Shortcut[] = []
+export let shortcuts: string[] = []
 export let currentSelection: number = 0
 
 let maxToShow = 5
@@ -67,6 +67,7 @@ $: {
           service="{service}"
           item="{item}"
           selected="{index === currentSelection - viewport_top}"
+          shortcut="{undefined}"
         />
       {/if}
     {/each}

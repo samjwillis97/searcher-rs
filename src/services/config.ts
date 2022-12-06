@@ -1,8 +1,14 @@
+import { type as osType } from '@tauri-apps/api/os'
 import { getConfig } from './commands'
 
 export type Config = {
   user_settings: UserSettings
   search_services: SearchServiceConfig[]
+  app_settings: AppSettings
+}
+
+export type AppSettings = {
+  modifier_key: string
 }
 
 export type UserSettings = {
@@ -43,6 +49,12 @@ export async function get_config(reload: boolean): Promise<Config> {
   if (reload || !config) {
     config = await getConfig()
   }
+
+  const currentOs = await osType()
+  config.app_settings = {
+    modifier_key: currentOs && currentOs === 'Darwin' ? 'Cmd' : 'Ctrl',
+  }
+
   return config
 }
 

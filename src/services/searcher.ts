@@ -7,25 +7,16 @@ export type SearchResult = {
   score: number
 }
 
-export type Shortcut = {
-  modifier: ModifierKey
-  key: string
-}
-
-export enum ModifierKey {
-  Cmd = 'cmd',
-  Ctrl = 'ctrl',
-}
-
 export type Field = {
   name: string
   value: string
-  shortcut: Shortcut
+  shortcut: string
 }
 
 export async function search(
   id: string,
   term: string
 ): Promise<SearchResult[]> {
+  console.log('SEARCH')
   return invoke('search', { id: id, term: term })
 }

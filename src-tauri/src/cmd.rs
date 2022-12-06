@@ -16,16 +16,10 @@ pub struct SearchResult {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct Shortcut {
-    modifier: String, // TODO: Enum this
-    key: String,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
 pub struct Field {
     pub name: String,
     pub value: String,
-    pub shortcut: Shortcut,
+    pub shortcut: String,
 }
 
 #[tauri::command]
@@ -115,10 +109,7 @@ pub fn get_info(
         vec.push(Field {
             name: v.display_name.as_ref().unwrap_or(&v.name).to_string(),
             value: row.get(&v.name).unwrap().to_string(),
-            shortcut: Shortcut {
-                modifier: "CMD".to_string(),
-                key: v.to_owned().shortcut.unwrap_or("".to_string()),
-            },
+            shortcut: v.to_owned().shortcut.unwrap_or("".to_string()),
         })
     });
 

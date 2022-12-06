@@ -4,22 +4,21 @@
 <script lang="ts">
 import List from '$lib/List.svelte'
 import Search from '$lib/Search.svelte'
-import { get_config, type SearchServiceConfig } from '../services/config'
-import type { SearchResult, Shortcut } from '../services/searcher'
-import { ModifierKey } from '../services/searcher'
+import {
+  get_config,
+  type Config,
+  type SearchServiceConfig,
+} from '../services/config'
+import type { SearchResult } from '../services/searcher'
 import { listen } from '@tauri-apps/api/event'
 import { appWindow } from '@tauri-apps/api/window'
-import {
-  closeSearch,
-  openInfo,
-  getInfo,
-  openService,
-} from '../services/commands'
+import { closeSearch, openInfo, openService } from '../services/commands'
 
 let service: string = ''
 let isFocused: boolean = true
 let currentSelection: number = 0
 
+let config: Config
 let searchServicesShortcutMap: Map<string, SearchServiceConfig> = new Map()
 get_config(true).then((value) => {
   if (service === '') {
@@ -27,10 +26,11 @@ get_config(true).then((value) => {
       searchServicesShortcutMap.set(value.shortcut, value)
     })
   }
+  config = value
 })
 
 let items: SearchResult[] = []
-let shortcuts: Shortcut[] = []
+let shortcuts: string[] = []
 function handleNewValues(event: CustomEvent) {
   items = event.detail.values
   if (service == '') {
@@ -39,12 +39,9 @@ function handleNewValues(event: CustomEvent) {
     for (let i = 0; i < items.length; i++) {
       const service = services.find((value) => value.name === items[i].value)
       if (service) {
-        shortcuts.push({
-          key: service.shortcut,
-          modifier: ModifierKey.Cmd, // TODO: FIx Me
-        })
+        shortcuts.push(service.shortcut)
       } else {
-        shortcuts.push({} as any)
+        shortcuts.push(undefined as any)
       }
     }
   } else {
@@ -98,9 +95,14 @@ document.onkeydown = function (event: KeyboardEvent) {
       }
       break
   }
-  if (service == '' && (event.metaKey || event.ctrlKey)) {
-    if (searchServicesShortcutMap.has(event.key)) {
-      openService(searchServicesShortcutMap.get(event.key).name).then()
+  if (service == '') {
+    if (
+      (config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
+      (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey)
+    ) {
+      if (searchServicesShortcutMap.has(event.key)) {
+        openService(searchServicesShortcutMap.get(event.key).name).then()
+      }
     }
   }
 }

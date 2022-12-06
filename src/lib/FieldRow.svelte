@@ -1,6 +1,7 @@
 <script lang="ts">
 import { writeText } from '@tauri-apps/api/clipboard'
 import type { Field } from 'src/services/searcher'
+import { get_config, type Config } from '../services/config'
 import {
   isPermissionGranted,
   requestPermission,
@@ -10,6 +11,11 @@ import {
 
 export let field: Field
 let clicked = false
+
+let config: Config
+get_config(true).then((value) => {
+  config = value
+})
 
 function handleValueClick(field: string, value: string) {
   if (clicked) {
@@ -38,7 +44,12 @@ async function notify(options: Options) {
   }
 }
 document.onkeydown = function (event: KeyboardEvent) {
-  if (field.shortcut.key === event.key && (event.metaKey || event.ctrlKey)) {
+  console.log(event)
+  if (
+    field.shortcut === event.key &&
+    ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
+      (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey))
+  ) {
     writeText(field.value).then()
     notify({
       title: 'Searcher-RS',
@@ -67,17 +78,17 @@ document.onkeydown = function (event: KeyboardEvent) {
       <span class="select-none self-center overflow-hidden text-ellipsis"
         >{field.value}</span
       >
-      {#if field.shortcut && field.shortcut.key}
+      {#if field.shortcut}
         <div class="flex">
           <div
             class="rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
           >
-            <span>{field.shortcut.modifier}</span>
+            <span>{config?.app_settings?.modifier_key}</span>
           </div>
           <div
             class="ml-1 rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
           >
-            <span>{field.shortcut.key}</span>
+            <span>{field.shortcut}</span>
           </div>
         </div>
       {/if}
