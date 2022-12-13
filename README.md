@@ -16,12 +16,10 @@ from handling most of the things I was after.
 
 ## TODO
 
-- Show all servies in list at boot
-- Show hotkeys assigned on the right hand side
-- Similar to spyglass show the service being used in the search bar somehow
 - Screen position of the search bar in config
 - Escape back to the initial search - maybe drive by config
 - Escape used as a back button rather than escaping the programing
+- Allow searching across multiple fields, just don't do the highlighting
 
 ## Config
 

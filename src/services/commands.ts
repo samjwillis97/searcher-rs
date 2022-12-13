@@ -10,6 +10,10 @@ export async function resizeWindow(height: number) {
   return await invoke('resize_window', { height })
 }
 
+export async function resizeInfoWindow(height: number) {
+  return await invoke('resize_info_window', { height })
+}
+
 export async function closeSearch() {
   return await invoke('close_search')
 }

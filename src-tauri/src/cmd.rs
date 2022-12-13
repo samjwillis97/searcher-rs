@@ -121,7 +121,7 @@ pub fn open_info(app: AppHandle, window: tauri::Window, id: &str) {
     let _ = window.emit(ClientEvent::ClearSearch.as_ref(), true);
     println!("Open ID: {:?}", id);
     window::hide_search_bar(&window);
-    window::show_info_window(&app, id);
+    window::show_info_window(&app, id, id);
 }
 
 #[tauri::command]
@@ -132,6 +132,11 @@ pub fn get_config() -> config::Config {
 #[tauri::command]
 pub fn resize_window(window: tauri::Window, height: f64) {
     window::resize_window(&window, height);
+}
+
+#[tauri::command]
+pub fn resize_info_window(window: tauri::Window, height: f64) {
+    window::resize_info_window(&window, height);
 }
 
 #[tauri::command]

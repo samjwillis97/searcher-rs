@@ -44,7 +44,6 @@ async function notify(options: Options) {
   }
 }
 document.onkeydown = function (event: KeyboardEvent) {
-  console.log(event)
   if (
     field.shortcut === event.key &&
     ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
@@ -60,8 +59,8 @@ document.onkeydown = function (event: KeyboardEvent) {
 </script>
 
 <div class="row my-2">
-  <div class="flex w-full text-xl">
-    <div class="flex w-40 justify-end">
+  <div class="text-l flex w-full">
+    <div class="flex w-32 justify-end">
       <div
         class="flex w-full justify-end rounded-md border-blue-500 bg-blue-500 p-2"
       >
@@ -79,7 +78,7 @@ document.onkeydown = function (event: KeyboardEvent) {
         >{field.value}</span
       >
       {#if field.shortcut}
-        <div class="flex">
+        <div class="flex select-none">
           <div
             class="rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
           >

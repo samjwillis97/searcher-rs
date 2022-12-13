@@ -1,5 +1,8 @@
+use std::collections::HashMap;
+
 use crate::constants;
 use crate::event::ClientEvent;
+use crate::searcher::DataState;
 use tauri::api::dialog::{MessageDialogBuilder, MessageDialogButtons, MessageDialogKind};
 use tauri::{AppHandle, LogicalSize, Manager, Monitor, Size, Window, WindowBuilder, WindowUrl};
 
@@ -74,6 +77,30 @@ pub fn resize_window(window: &Window, height: f64) {
     }));
 }
 
+pub fn resize_info_window(window: &Window, height: f64) {
+    println!("Resizing info window");
+    let window_height = {
+        if let Some(monitor) = find_monitor(window) {
+            let size = monitor.size();
+            let scale = monitor.scale_factor();
+            Some((size.height as f64) / scale)
+        } else {
+            None
+        }
+    };
+
+    let height = if let Some(window_height) = window_height {
+        window_height.min(height)
+    } else {
+        height
+    };
+
+    let _ = window.set_size(Size::Logical(LogicalSize {
+        width: 455.00,
+        height,
+    }));
+}
+
 pub fn alert(window: &Window, title: &str, message: &str) {
     MessageDialogBuilder::new(title, message)
         .parent(window)
@@ -91,7 +118,7 @@ fn show_window(window: &Window) {
     let _ = window.center();
 }
 
-pub fn show_info_window(app: &AppHandle, id: &str) {
+pub fn show_info_window(app: &AppHandle, id: &str, title: &str) {
     let window = if let Some(window) = app.get_window(constants::INFO_WIN_NAME) {
         window
     } else {
@@ -100,13 +127,12 @@ pub fn show_info_window(app: &AppHandle, id: &str) {
             constants::INFO_WIN_NAME,
             WindowUrl::App(("/info/".to_string() + id).into()),
         )
-        .title("Spyglass - Update Available!")
-        // .min_inner_size(450.0, 375.0)
-        // .max_inner_size(450.0, 375.0)
+        .title(title)
+        // .min_inner_size(450.0, 500.0)
+        .max_inner_size(455.0, 500.0)
         .build()
         .expect("Unable to build window for updater")
     };
-
     show_window(&window);
 }
 

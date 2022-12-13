@@ -42,8 +42,6 @@ function generateHtmlString(item: SearchResult): String {
     })
     .join('')
 }
-console.log(item)
-console.log(shortcut)
 </script>
 
 {#if item}

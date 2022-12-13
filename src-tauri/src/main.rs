@@ -54,6 +54,7 @@ fn main() {
                 cmd::get_list,
                 cmd::get_config,
                 cmd::resize_window,
+                cmd::resize_info_window,
                 cmd::close_search,
                 cmd::open_service,
                 cmd::open_info,
