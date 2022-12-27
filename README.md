@@ -20,6 +20,8 @@ from handling most of the things I was after.
 - Escape back to the initial search - maybe drive by config
 - Escape used as a back button rather than escaping the programing
 - Allow searching across multiple fields, just don't do the highlighting
+- Only display the selected fields, not necessarily the searched fields
+- Make sure display name is working
 
 ## Config
 
