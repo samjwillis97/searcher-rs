@@ -19,10 +19,12 @@ get_config(false).then((v) => {
 
 async function handleClick(event: MouseEvent) {
   //@ts-ignore
-  if (!service && event.detail === 1 && event.webkitForce === 1) {
-    await openService(item.id)
-  } else {
-    await openInfo(item.id)
+  if (event.detail === 1 && event.webkitForce === 1) {
+    if (!service) {
+      await openService(item.id)
+    } else {
+      await openInfo(item.id)
+    }
   }
 }
 

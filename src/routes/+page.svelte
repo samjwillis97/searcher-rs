@@ -13,6 +13,7 @@ import type { SearchResult } from '../services/searcher'
 import { listen } from '@tauri-apps/api/event'
 import { appWindow } from '@tauri-apps/api/window'
 import { closeSearch, openInfo, openService } from '../services/commands'
+import { onDestroy, onMount } from 'svelte'
 
 let service: string = ''
 let isFocused: boolean = true
@@ -31,6 +32,7 @@ get_config(true).then((value) => {
 
 let items: SearchResult[] = []
 let shortcuts: string[] = []
+
 function handleNewValues(event: CustomEvent) {
   items = event.detail.values
   if (service == '') {
@@ -55,14 +57,35 @@ listen('ClearSearch', (_) => {
 })
 
 listen('SetService', (value) => {
-  service = value.payload?.toString()
+  service = value.payload?.toString() ?? ''
 })
 
-document.onkeydown = function (event: KeyboardEvent) {
+function selectNext() {
+  selectIndex(currentSelection + 1)
+}
+
+function selectPrevious() {
+  selectIndex(currentSelection - 1)
+}
+
+function selectIndex(index: number) {
+  if (index < 0) {
+    currentSelection = items.length - 1
+  } else if (index > items.length - 1) {
+    currentSelection = 0
+  } else {
+    currentSelection = index
+  }
+}
+
+function handleKeyUp(event: KeyboardEvent) {
   switch (event.key) {
     case 'Escape':
-      // TODO: Go back instead of closing depending on the state
-      closeSearch().then()
+      if (service !== '' && !config.app_settings.escape_closes_service_search) {
+        openService('').then()
+      } else {
+        closeSearch().then()
+      }
       break
     case 'Enter':
       if (!service) {
@@ -70,29 +93,17 @@ document.onkeydown = function (event: KeyboardEvent) {
       } else {
         openInfo(items[currentSelection].id).then()
       }
+      event.preventDefault()
       break
     case 'Tab':
-      currentSelection++
-      if (currentSelection > items.length - 1) {
-        currentSelection = 0
-      }
+      selectNext()
       event.preventDefault()
       break
     case 'n':
-      if (event.ctrlKey) {
-        currentSelection++
-        if (currentSelection > items.length - 1) {
-          currentSelection = 0
-        }
-      }
+      if (event.ctrlKey) selectNext()
       break
     case 'p':
-      if (event.ctrlKey) {
-        currentSelection--
-        if (currentSelection < 0) {
-          currentSelection = items.length - 1
-        }
-      }
+      if (event.ctrlKey) selectPrevious()
       break
   }
   if (service == '') {
@@ -101,14 +112,26 @@ document.onkeydown = function (event: KeyboardEvent) {
       (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey)
     ) {
       if (searchServicesShortcutMap.has(event.key)) {
-        openService(searchServicesShortcutMap.get(event.key).name).then()
+        const serviceName = searchServicesShortcutMap.get(event.key)?.name
+        if (serviceName) {
+          openService(serviceName).then()
+        }
       }
     }
   }
 }
 
+onMount(() => {
+  document.addEventListener('keyup', handleKeyUp)
+})
+
+onDestroy(() => {
+  document.removeEventListener('keyup', handleKeyUp)
+})
+
 appWindow.onFocusChanged(({ payload: focused }) => {
   if (!focused) {
+    // TODO: Address this pls
     // closeSearch().then();
   }
 })

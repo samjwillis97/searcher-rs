@@ -9,6 +9,8 @@ export type Config = {
 
 export type AppSettings = {
   modifier_key: string
+  escape_closes_info: boolean
+  escape_closes_service_search: boolean
 }
 
 export type UserSettings = {
@@ -51,9 +53,8 @@ export async function get_config(reload: boolean): Promise<Config> {
   }
 
   const currentOs = await osType()
-  config.app_settings = {
-    modifier_key: currentOs && currentOs === 'Darwin' ? 'Cmd' : 'Ctrl',
-  }
+  config.app_settings.modifier_key =
+    currentOs && currentOs === 'Darwin' ? 'Cmd' : 'Ctrl'
 
   return config
 }

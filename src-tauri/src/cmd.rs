@@ -1,4 +1,5 @@
 use crate::config;
+use crate::constants;
 use crate::event::ClientEvent;
 use crate::searcher;
 use crate::window;
@@ -6,6 +7,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use serde::{Deserialize, Serialize};
 use tauri::AppHandle;
+use tauri::Manager;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct SearchResult {
@@ -73,6 +75,27 @@ pub fn get_list() -> Vec<String> {
 #[tauri::command]
 pub fn open_service(app: AppHandle, window: tauri::Window, service: &str) {
     println!("Lets Open {}", service);
+    let _ = window.emit(ClientEvent::ClearSearch.as_ref(), true);
+    let _ = window.emit(ClientEvent::SetService.as_ref(), service.to_string());
+    let _ = window.emit(ClientEvent::FocusSearch.as_ref(), true);
+}
+
+#[tauri::command]
+pub fn open_previous_service(
+    app: AppHandle,
+    window: tauri::Window,
+    search_state: tauri::State<searcher::DataState>,
+) {
+    window::close_window(&window);
+
+    let guarded_state = search_state.0.lock().unwrap();
+    let service = &guarded_state.id;
+    println!("Lets Open previous: {}", service);
+
+    let search_window = app.get_window(constants::SEARCH_WIN_NAME).unwrap();
+
+    // TODO: Do we want to clear?
+    window::show_search_bar(&search_window);
     let _ = window.emit(ClientEvent::ClearSearch.as_ref(), true);
     let _ = window.emit(ClientEvent::SetService.as_ref(), service.to_string());
     let _ = window.emit(ClientEvent::FocusSearch.as_ref(), true);

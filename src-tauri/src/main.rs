@@ -57,6 +57,7 @@ fn main() {
                 cmd::resize_info_window,
                 cmd::close_search,
                 cmd::open_service,
+                cmd::open_previous_service,
                 cmd::open_info,
                 cmd::get_info,
                 cmd::close_window,

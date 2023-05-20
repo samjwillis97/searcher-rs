@@ -1,13 +1,9 @@
 <script lang="ts">
 import { writeText } from '@tauri-apps/api/clipboard'
-import type { Field } from 'src/services/searcher'
+import type { Field } from '../services/searcher'
 import { get_config, type Config } from '../services/config'
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification,
-  type Options,
-} from '@tauri-apps/api/notification'
+import { notify } from '../services/notifications'
+import { onMount } from 'svelte'
 
 export let field: Field
 let clicked = false
@@ -33,17 +29,15 @@ function handleValueClick(field: string, value: string) {
   }, 333)
 }
 
-async function notify(options: Options) {
-  let permissionGranted = await isPermissionGranted()
-  if (!permissionGranted) {
-    const permission = await requestPermission()
-    permissionGranted = permission === 'granted'
-  }
-  if (permissionGranted) {
-    sendNotification(options)
-  }
-}
-document.onkeydown = function (event: KeyboardEvent) {
+onMount(() => {
+  document.addEventListener('keyup', handleKeyUp)
+})
+
+onMount(() => {
+  document.removeEventListener('keyup', handleKeyUp)
+})
+
+function handleKeyUp(event: KeyboardEvent) {
   if (
     field.shortcut === event.key &&
     ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||

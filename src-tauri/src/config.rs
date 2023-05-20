@@ -9,6 +9,7 @@ use std::{fs, path::PathBuf};
 pub struct Config {
     pub user_settings: Option<UserSettings>,
     pub search_services: Vec<SearchServiceConfig>,
+    pub app_settings: Option<AppSettings>,
 }
 
 impl Default for Config {
@@ -16,6 +17,21 @@ impl Default for Config {
         Config {
             user_settings: Some(UserSettings::default()),
             search_services: Vec::new(),
+            app_settings: Some(AppSettings::default()),
+        }
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct AppSettings {
+    pub escape_closes_info: Option<bool>,
+    pub escape_closes_service_search: Option<bool>,
+}
+impl Default for AppSettings {
+    fn default() -> Self {
+        AppSettings {
+            escape_closes_info: Some(false),
+            escape_closes_service_search: Some(true),
         }
     }
 }
@@ -124,6 +140,9 @@ impl Config {
                 let mut settings: Config =
                     serde_yaml::from_str(&fs::read_to_string(prefs_path).unwrap())?;
                 // Do any checks on config here
+                if (settings.app_settings.is_none()) {
+                    settings.app_settings = Some(AppSettings::default());
+                }
                 Ok(settings)
             }
             _ => {

@@ -1,31 +1,48 @@
-<style>
-</style>
-
 <script lang="ts">
 import type { Field } from 'src/services/searcher'
 
+import { get_config, type Config } from '../../../services/config'
 import {
-  closeWindow,
   getInfo,
   resizeInfoWindow,
+  openPreviousService,
+  closeWindow,
 } from '../../../services/commands'
 import type { InfoData } from './+page'
 import FieldRow from '$lib/FieldRow.svelte'
+import { onDestroy, onMount } from 'svelte'
 
 export let data: InfoData
 
 let fields: Field[] = []
+
+let config: Config
+get_config(true).then((value) => {
+  config = value
+})
 
 getInfo(data.id).then((v) => {
   fields = v
   resizeInfoWindow((v.length + 1) * 45.25 + 10).then()
 })
 
-document.onkeydown = function (event: KeyboardEvent) {
+function handleKeyUp(event: KeyboardEvent) {
   if (event.key === 'Escape') {
-    closeWindow().then()
+    if (config.app_settings.escape_closes_info) {
+      closeWindow().then()
+    } else {
+      openPreviousService().then()
+    }
   }
 }
+
+onMount(() => {
+  document.addEventListener('keyup', handleKeyUp)
+})
+
+onDestroy(() => {
+  document.removeEventListener('keyup', handleKeyUp)
+})
 </script>
 
 <div class="col-auto mx-3">

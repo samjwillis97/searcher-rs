@@ -26,6 +26,10 @@ export async function openService(service: string) {
   return await invoke('open_service', { service })
 }
 
+export async function openPreviousService() {
+  return await invoke('open_previous_service')
+}
+
 export async function openInfo(id: string) {
   return await invoke('open_info', { id })
 }

@@ -5,23 +5,28 @@ from handling most of the things I was after.
 
 ## Goals
 
-- Application starts (on startup) to system tray
 - Parses the config file - error popup if fails
 - Reloads config on change
-- A global hotkey (similar to PrtScrn) opens up the search window
 - initial search will search the configs
-- it will also accept hotkeys as defined in the config
-- Pressing escape/shortcut in the search window will close it and clear search
-  - effectively resets the search
 
 ## TODO
 
+- Wildcard search (ALL?)
 - Screen position of the search bar in config
+- Allow searching across multiple fields, just don't do the highlighting
+- Make sure display name is working
+
+## Completed
+
+- Application starts (on startup) to system tray
+- A global hotkey (similar to PrtScrn) opens up the search window
+- it will also accept hotkeys as defined in the config
+- Only display the selected fields, not necessarily the searched fields
 - Escape back to the initial search - maybe drive by config
 - Escape used as a back button rather than escaping the programing
-- Allow searching across multiple fields, just don't do the highlighting
-- Only display the selected fields, not necessarily the searched fields
-- Make sure display name is working
+- Pressing escape/shortcut in the search window will close it and clear search
+  - effectively resets the search
+
 
 ## Config
 
