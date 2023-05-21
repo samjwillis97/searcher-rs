@@ -1,5 +1,5 @@
 pub const INPUT_WIDTH: f64 = 640.0;
-pub const INPUT_Y: f64 = 128.0;
+pub const INPUT_Y: f64 = 196.0;
 
 // Min window size for settings panel
 pub const MIN_WINDOW_WIDTH: f64 = 704.0;

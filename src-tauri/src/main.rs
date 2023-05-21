@@ -93,14 +93,16 @@ fn main() {
                 }
             }
 
+            let config_clone = config.clone();
+
             // Load user settings
-            app.manage(config.clone());
+            app.manage(config_clone.clone());
             // Set Initial value for state
             app.manage(DataState( Mutex::new(InnerData{ id: "".to_string(), data: HashMap::new()}) ));
 
             // Register global shortcut
-            let user_settings = config.user_settings.unwrap_or(config::UserSettings::default());
-            let shortcut = user_settings.shortcut.unwrap_or(config::UserSettings::default().shortcut.unwrap());
+            let user_settings = config.user_settings.unwrap_or(config::UserSettings::default()).clone();
+            let shortcut = user_settings.shortcut.unwrap_or(config::UserSettings::default().shortcut.unwrap()).clone();
             let window_clone = window.clone();
             let mut shortcuts = window.app_handle().global_shortcut_manager();
             match shortcuts.is_registered(&shortcut) {
@@ -111,12 +113,13 @@ fn main() {
                         if let Err(e) = shortcuts
                             .register(&shortcut, move || {
                                 let window = window_clone.clone();
+                                let config = &config_clone.clone();
                                 let _ = window.is_visible()
                                     .map(|is_visible| {
                                         if is_visible {
                                             window::hide_search_bar(&window);
                                         } else {
-                                            window::show_search_bar(&window);
+                                            window::show_search_bar(&window, config);
                                         }
                                     });
                             }) {

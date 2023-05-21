@@ -1,3 +1,7 @@
+app_settings:
+  position: top center
+  escape_closes_info: false
+  escape_closes_service_search: true
 user_settings:
   entries_to_show: 5
   fzf_algorithm: jaro-winkler

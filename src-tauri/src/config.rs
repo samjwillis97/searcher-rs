@@ -26,12 +26,14 @@ impl Default for Config {
 pub struct AppSettings {
     pub escape_closes_info: Option<bool>,
     pub escape_closes_service_search: Option<bool>,
+    pub position: Option<String>,
 }
 impl Default for AppSettings {
     fn default() -> Self {
         AppSettings {
             escape_closes_info: Some(false),
             escape_closes_service_search: Some(true),
+            position: Some("center".to_string()),
         }
     }
 }
@@ -128,7 +130,7 @@ impl Config {
         });
         // Handle errors here
 
-        config
+        return config;
     }
 
     pub fn load_config() -> anyhow::Result<Config> {

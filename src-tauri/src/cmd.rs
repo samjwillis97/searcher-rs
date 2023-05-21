@@ -84,6 +84,7 @@ pub fn open_service(app: AppHandle, window: tauri::Window, service: &str) {
 pub fn open_previous_service(
     app: AppHandle,
     window: tauri::Window,
+    config: tauri::State<config::Config>,
     search_state: tauri::State<searcher::DataState>,
 ) {
     window::close_window(&window);
@@ -95,7 +96,7 @@ pub fn open_previous_service(
     let search_window = app.get_window(constants::SEARCH_WIN_NAME).unwrap();
 
     // TODO: Do we want to clear?
-    window::show_search_bar(&search_window);
+    window::show_search_bar(&search_window, config.inner());
     let _ = window.emit(ClientEvent::ClearSearch.as_ref(), true);
     let _ = window.emit(ClientEvent::SetService.as_ref(), service.to_string());
     let _ = window.emit(ClientEvent::FocusSearch.as_ref(), true);
@@ -140,11 +141,16 @@ pub fn get_info(
 }
 
 #[tauri::command]
-pub fn open_info(app: AppHandle, window: tauri::Window, id: &str) {
+pub fn open_info(
+    app: AppHandle,
+    window: tauri::Window,
+    config: tauri::State<config::Config>,
+    id: &str,
+) {
     let _ = window.emit(ClientEvent::ClearSearch.as_ref(), true);
     println!("Open ID: {:?}", id);
     window::hide_search_bar(&window);
-    window::show_info_window(&app, id, id);
+    window::show_info_window(&app, config.inner(), id, id);
 }
 
 #[tauri::command]
