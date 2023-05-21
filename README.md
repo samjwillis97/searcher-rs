@@ -3,6 +3,13 @@
 A lot of this project is code from Spyglass, as it was the perfect base to start
 from handling most of the things I was after.
 
+## Screenshots
+
+<img width="765" alt="image" src="https://github.com/samjwillis97/searcher-rs/assets/37866085/3c4cdc2d-322d-497d-8330-aa1241613d63">
+
+<img width="765" alt="image" src="https://github.com/samjwillis97/searcher-rs/assets/37866085/ce2ffcad-8b63-4b97-8283-20b14a422f02">
+
+
 ## Goals
 
 - Parses the config file - error popup if fails
