@@ -52,14 +52,14 @@ function generateHtmlString(item: SearchResult): String {
         row
         w-full 
         cursor-pointer
-        rounded-lg
+        rounded-md
         py-0.5
         px-2
         text-sm
         font-medium
         outline-none
         hover:bg-zinc-700
-        hover:bg-opacity-30
+        hover:bg-opacity-20
         "
     class:text-indigo-500="{selected}"
     class:bg-zinc-700="{selected}"
@@ -67,7 +67,7 @@ function generateHtmlString(item: SearchResult): String {
     class:text-zinc-200="{!selected}"
     on:click="{handleClick}"
   >
-    <div class="flex w-full justify-between ">
+    <div class="flex w-full flex-row items-center justify-between py-0.5">
       <div>
         {@html htmlString}
       </div>

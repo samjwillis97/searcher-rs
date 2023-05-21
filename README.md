@@ -17,6 +17,7 @@ from handling most of the things I was after.
 
 ## TODO
 
+- On Lose focus hide window
 - Wildcard search (ALL?)
 - Allow searching across multiple fields, just don't do the highlighting
 - Make sure display name is working

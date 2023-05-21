@@ -6,8 +6,12 @@
 use std::{collections::HashMap, sync::Mutex};
 
 use auto_launch::AutoLaunchBuilder;
+
+#[cfg(target_os = "macos")]
 use cocoa;
+#[cfg(target_os = "macos")]
 use cocoa::appkit::NSWindow;
+
 use tauri::{GlobalShortcutManager, Manager, RunEvent};
 use tokio::sync::broadcast;
 
@@ -35,7 +39,7 @@ fn main() {
     if let Ok(path) = std::env::current_exe() {
         if let Some(path) = path.to_str() {
             if let Ok(auto) = AutoLaunchBuilder::new()
-                .set_app_name("com.williscloud.tif_search")
+                .set_app_name("com.williscloud.tif-search")
                 .set_app_path(path)
                 .set_use_launch_agent(true)
                 .build()

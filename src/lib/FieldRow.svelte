@@ -66,7 +66,7 @@ function handleKeyUp(event: KeyboardEvent) {
       on:click="{() => {
         handleValueClick(field.name, field.value)
       }}"
-      class="ml-2 flex grow cursor-pointer justify-between rounded-md border border-stone-900 bg-stone-900 p-2 hover:border-blue-700 hover:transition active:border-blue-900"
+      class="ml-2 flex grow cursor-pointer justify-between rounded-md border border-stone-900 bg-stone-900 p-2 text-zinc-300 hover:border-blue-700 hover:transition active:border-blue-900"
     >
       <span class="select-none self-center overflow-hidden text-ellipsis"
         >{field.value}</span

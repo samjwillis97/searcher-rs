@@ -41,12 +41,12 @@ listen('FocusSearch', (_) => {
   <div class="flex w-full flex-row">
     {#if service !== ''}
       <div
-        class="flex rounded-tl-lg border-b border-zinc-500
+        class="flex rounded-tl-md border-b border-zinc-500
       border-opacity-50
       bg-indigo-900
       bg-opacity-95
         "
-        class:rounded-bl-lg="{!hasSearchValues}"
+        class:rounded-bl-md="{!hasSearchValues}"
       >
         <span class="text-l px-2 pt-2.5 text-zinc-200">{service}</span>
       </div>
@@ -65,10 +65,10 @@ listen('FocusSearch', (_) => {
       text-zinc-200
       outline-none
       "
-      class:rounded-t-lg="{service === ''}"
-      class:rounded-tr-lg="{service !== ''}"
-      class:rounded-br-lg="{!hasSearchValues}"
-      class:rounded-bl-lg="{service === '' && !hasSearchValues}"
+      class:rounded-t-md="{service === ''}"
+      class:rounded-tr-md="{service !== ''}"
+      class:rounded-br-md="{!hasSearchValues}"
+      class:rounded-bl-md="{service === '' && !hasSearchValues}"
       id="search"
       autocomplete="off"
       autocorrect="off"

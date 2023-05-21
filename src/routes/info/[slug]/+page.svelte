@@ -1,4 +1,5 @@
 <script lang="ts">
+export const prerender = 'auto'
 import type { Field } from 'src/services/searcher'
 
 import { get_config, type Config } from '../../../services/config'
@@ -45,10 +46,12 @@ onDestroy(() => {
 })
 </script>
 
-<div class="col-auto mx-3">
-  {#each fields as field}
-    {#if field.value}
-      <FieldRow field="{field}" />
-    {/if}
-  {/each}
-</div>
+<main style="height: 100%;" class="bg-zinc-300">
+  <div class="col-auto mx-2">
+    {#each fields as field}
+      {#if field.value}
+        <FieldRow field="{field}" />
+      {/if}
+    {/each}
+  </div>
+</main>

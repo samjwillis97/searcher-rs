@@ -52,7 +52,7 @@ $: {
 }
 </script>
 
-<div class="col overflow-hidden rounded-b-lg bg-zinc-900 bg-opacity-95">
+<div class="col overflow-hidden rounded-b-md bg-zinc-900 bg-opacity-95">
   {#if viewport_items && viewport_items.length > 0}
     {#each viewport_items as item, index}
       <div class="p-1">

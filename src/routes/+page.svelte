@@ -151,7 +151,7 @@ appWindow.onFocusChanged(({ payload: focused }) => {
 <main>
   <!-- TODO: Look at `backdrop-blur-sm` -->
   <div
-    class="backdrop-blu backdrop-blu rounded-lg border-x border-t border-zinc-500 border-opacity-50"
+    class="rounded-md border-x border-t border-zinc-500 border-opacity-50"
     class:border-b="{items && items.length > 0}"
   >
     <Search
