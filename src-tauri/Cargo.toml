@@ -26,6 +26,7 @@ strum = "0.24"
 strum_macros = "0.24"
 fuzzy-matcher = "*"
 calamine = "0.19.1"
+# tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.24"

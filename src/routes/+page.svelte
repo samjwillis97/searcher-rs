@@ -96,14 +96,7 @@ function handleKeyUp(event: KeyboardEvent) {
       event.preventDefault()
       break
     case 'Tab':
-      selectNext()
       event.preventDefault()
-      break
-    case 'n':
-      if (event.ctrlKey) selectNext()
-      break
-    case 'p':
-      if (event.ctrlKey) selectPrevious()
       break
   }
   if (service == '') {
@@ -123,9 +116,15 @@ function handleKeyUp(event: KeyboardEvent) {
 
 function handleKeyDown(event: KeyboardEvent) {
   switch (event.key) {
-    case 'Enter':
     case 'Tab':
+      selectNext()
       event.preventDefault()
+      break
+    case 'n':
+      if (event.ctrlKey) selectNext()
+      break
+    case 'p':
+      if (event.ctrlKey) selectPrevious()
       break
   }
 }

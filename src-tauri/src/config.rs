@@ -2,7 +2,7 @@ use anyhow;
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use serde_yaml;
-use std::{fs, path::PathBuf};
+use std::{env, fs, path::PathBuf};
 
 // TODO: Automagically reload
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -156,22 +156,26 @@ impl Config {
         }
     }
 
+    /// | ------- | ----------------------------------------------------------------------- | ------------------------------------------------------ |
+    /// | Linux   | `$XDG_CONFIG_HOME`/`_project_path_` or `$HOME`/.config/`_project_path_` | /home/alice/.config/barapp                             |
+    /// | macOS   | `$HOME`/Library/Preferences/`_project_path_`                            | /Users/Alice/Library/Preferences/com.Foo-Corp.Bar-App  |
+    /// | Windows | `{FOLDERID_RoamingAppData}`\\`_project_path_`\\config                   | C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config |
     pub fn prefs_dir() -> PathBuf {
         let prefs_dir = ProjectDirs::from("com", "williscloud", "tif_search").unwrap();
         return prefs_dir.preference_dir().to_path_buf();
     }
 
     pub fn prefs_file() -> PathBuf {
-        let mut path = PathBuf::new();
-        path.push("/Users");
-        path.push("samwillis");
-        path.push("projects");
-        path.push("searcher-rs");
-        path.push("testing");
-        path.push("settings");
-        path.set_extension("yaml");
-        println!("Preference path: {:?}", path);
-        return path;
-        // return Self::prefs_dir().join("settings.yaml");
+        // let mut path = PathBuf::new();
+        // path.push("/Users");
+        // path.push("samwillis");
+        // path.push("projects");
+        // path.push("searcher-rs");
+        // path.push("testing");
+        // path.push("settings");
+        // path.set_extension("yaml");
+        // println!("Preference path: {:?}", path);
+        // return path;
+        return Self::prefs_dir().join("settings.yaml");
     }
 }

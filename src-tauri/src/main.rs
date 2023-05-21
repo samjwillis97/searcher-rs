@@ -52,6 +52,11 @@ fn main() {
     }
 
     let app = tauri::Builder::default()
+        // .plugin(tauri_plugin_log::Builder::default().targets([
+        //     LogTarget::LogDir,
+        //     LogTarget::Stdout,
+        //     LogTarget::Webview,
+        // ]).build())
         .invoke_handler(
             tauri::generate_handler![
                 cmd::search,
