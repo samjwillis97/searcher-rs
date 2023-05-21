@@ -52,7 +52,7 @@ $: {
 }
 </script>
 
-<div class="col">
+<div class="col overflow-hidden">
   {#if viewport_items && viewport_items.length > 0}
     {#each viewport_items as item, index}
       {#if shortcuts && shortcuts.length > index - 1}

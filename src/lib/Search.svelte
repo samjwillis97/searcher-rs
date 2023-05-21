@@ -10,7 +10,7 @@ let searchValue = ''
 
 export let isFocused = true
 
-let searchBar: HTMLInputElement = null
+let searchBar: HTMLInputElement
 const dispatch = createEventDispatcher()
 
 async function onInput() {
@@ -47,6 +47,10 @@ listen('FocusSearch', (_) => {
     <input
       class="grow"
       id="search"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
       selected="{isFocused}"
       placeholder="{placeholder}"
       bind:this="{searchBar}"

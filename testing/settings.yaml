@@ -1,5 +1,5 @@
 app_settings:
-  position: top center
+  position: bottom right
   escape_closes_info: false
   escape_closes_service_search: true
 user_settings:

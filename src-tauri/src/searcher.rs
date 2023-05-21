@@ -33,6 +33,7 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
 
     let guarded_state = search_state.0.lock().unwrap();
 
+    println!("total rows: {}", &guarded_state.data.len());
     for row in &guarded_state.data {
         match matcher.fuzzy_indices(row.0, term) {
             Some((score, indices)) => {
@@ -41,8 +42,8 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
                 let result = cmd::SearchResult {
                     id: row.0.to_string(),
                     value: row.0.to_string(),
-                    indices: indices,
-                    score: score,
+                    indices,
+                    score,
                 };
                 if search_results.len() > 0 {
                     if score >= search_results.first().unwrap().score {
@@ -65,6 +66,8 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
             None => {}
         };
     }
+
+    println!("total results: {}", search_results.len());
 
     return search_results;
 }

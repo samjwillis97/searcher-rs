@@ -121,12 +121,23 @@ function handleKeyUp(event: KeyboardEvent) {
   }
 }
 
+function handleKeyDown(event: KeyboardEvent) {
+  switch (event.key) {
+    case 'Enter':
+    case 'Tab':
+      event.preventDefault()
+      break
+  }
+}
+
 onMount(() => {
   document.addEventListener('keyup', handleKeyUp)
+  document.addEventListener('keydown', handleKeyDown)
 })
 
 onDestroy(() => {
   document.removeEventListener('keyup', handleKeyUp)
+  document.removeEventListener('keydown', handleKeyDown)
 })
 
 appWindow.onFocusChanged(({ payload: focused }) => {
