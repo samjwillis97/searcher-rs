@@ -14,3 +14,11 @@ binaries
 
 ~$*.xlsx
 
+
+# Devenv
+.devenv*
+devenv.local.nix
+.direnv
+
+.svelte-kit/
+
