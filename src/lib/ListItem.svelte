@@ -47,7 +47,6 @@ function generateHtmlString(item: SearchResult): String {
 </script>
 
 {#if item}
-  <!-- backdrop-blur would be nice in the classes-->
   <button
     class="
         row
@@ -56,12 +55,13 @@ function generateHtmlString(item: SearchResult): String {
         rounded-lg
         py-0.5
         px-2
+        text-sm
         font-medium
         outline-none
         hover:bg-zinc-700
         hover:bg-opacity-30
         "
-    class:text-red-500="{selected}"
+    class:text-indigo-500="{selected}"
     class:bg-zinc-700="{selected}"
     class:bg-opacity-30="{selected}"
     class:text-zinc-200="{!selected}"

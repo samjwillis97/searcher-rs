@@ -43,7 +43,7 @@ listen('FocusSearch', (_) => {
       <div
         class="flex rounded-tl-lg border-b border-zinc-500
       border-opacity-50
-      bg-blue-900
+      bg-indigo-900
       bg-opacity-95
         "
         class:rounded-bl-lg="{!hasSearchValues}"
