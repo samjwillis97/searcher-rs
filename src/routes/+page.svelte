@@ -149,15 +149,22 @@ appWindow.onFocusChanged(({ payload: focused }) => {
 </script>
 
 <main>
-  <Search
-    service="{service}"
-    isFocused="{isFocused}"
-    on:newValues="{handleNewValues}"
-  />
-  <List
-    items="{items}"
-    service="{service}"
-    shortcuts="{shortcuts}"
-    currentSelection="{currentSelection}"
-  />
+  <!-- TODO: Look at `backdrop-blur-sm` -->
+  <div
+    class="backdrop-blu backdrop-blu rounded-lg border-x border-t border-zinc-500 border-opacity-50"
+    class:border-b="{items && items.length > 0}"
+  >
+    <Search
+      service="{service}"
+      isFocused="{isFocused}"
+      hasSearchValues="{items && items.length > 0}"
+      on:newValues="{handleNewValues}"
+    />
+    <List
+      items="{items}"
+      service="{service}"
+      shortcuts="{shortcuts}"
+      currentSelection="{currentSelection}"
+    />
+  </div>
 </main>

@@ -35,7 +35,7 @@ $: {
     toShow = maxToShow
   }
 
-  resizeWindow((toShow + 1) * 45.25).then()
+  resizeWindow((toShow + 1) * 46.25).then()
 }
 
 $: {
@@ -52,24 +52,26 @@ $: {
 }
 </script>
 
-<div class="col overflow-hidden">
+<div class="col overflow-hidden rounded-b-lg bg-zinc-900 bg-opacity-75">
   {#if viewport_items && viewport_items.length > 0}
     {#each viewport_items as item, index}
-      {#if shortcuts && shortcuts.length > index - 1}
-        <ListItem
-          service="{service}"
-          item="{item}"
-          selected="{index === currentSelection - viewport_top}"
-          shortcut="{shortcuts[index]}"
-        />
-      {:else}
-        <ListItem
-          service="{service}"
-          item="{item}"
-          selected="{index === currentSelection - viewport_top}"
-          shortcut="{undefined}"
-        />
-      {/if}
+      <div class="p-1">
+        {#if shortcuts && shortcuts.length > index - 1}
+          <ListItem
+            service="{service}"
+            item="{item}"
+            selected="{index === currentSelection - viewport_top}"
+            shortcut="{shortcuts[index]}"
+          />
+        {:else}
+          <ListItem
+            service="{service}"
+            item="{item}"
+            selected="{index === currentSelection - viewport_top}"
+            shortcut="{undefined}"
+          />
+        {/if}
+      </div>
     {/each}
   {/if}
 </div>

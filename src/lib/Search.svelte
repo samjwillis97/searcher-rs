@@ -3,12 +3,12 @@ import { listen } from '@tauri-apps/api/event'
 import { createEventDispatcher } from 'svelte'
 import { search } from '../services/searcher'
 
+export let isFocused = true
 export let service = ''
+export let hasSearchValues = false
 
 let placeholder = 'Search...'
 let searchValue = ''
-
-export let isFocused = true
 
 let searchBar: HTMLInputElement
 const dispatch = createEventDispatcher()
@@ -40,12 +40,35 @@ listen('FocusSearch', (_) => {
 <main class="row">
   <div class="flex w-full flex-row">
     {#if service !== ''}
-      <div class="flex rounded-lg bg-cyan-700">
-        <span class="text-l px-2 pt-2 text-white">{service}</span>
+      <div
+        class="flex rounded-tl-lg border-b border-zinc-500
+      border-opacity-50
+      bg-blue-900
+      bg-opacity-95
+        "
+        class:rounded-bl-lg="{!hasSearchValues}"
+      >
+        <span class="text-l px-2 pt-2.5 text-zinc-200">{service}</span>
       </div>
     {/if}
     <input
-      class="grow"
+      class="
+      grow
+      border-b
+      border-zinc-500
+      border-opacity-50
+      bg-zinc-900
+      bg-opacity-95
+      py-2.5
+      px-5
+      font-medium
+      text-zinc-200
+      outline-none
+      "
+      class:rounded-t-lg="{service === ''}"
+      class:rounded-tr-lg="{service !== ''}"
+      class:rounded-br-lg="{!hasSearchValues}"
+      class:rounded-bl-lg="{service === '' && !hasSearchValues}"
       id="search"
       autocomplete="off"
       autocorrect="off"
