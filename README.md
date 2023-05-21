@@ -7,17 +7,17 @@ from handling most of the things I was after.
 
 - Parses the config file - error popup if fails
 - Reloads config on change
-- initial search will search the configs
 
 ## TODO
 
 - Wildcard search (ALL?)
-- Screen position of the search bar in config
 - Allow searching across multiple fields, just don't do the highlighting
 - Make sure display name is working
 
 ## Completed
 
+- initial search will search the configs
+- Screen position of the search bar in config
 - Application starts (on startup) to system tray
 - A global hotkey (similar to PrtScrn) opens up the search window
 - it will also accept hotkeys as defined in the config
