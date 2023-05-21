@@ -17,6 +17,9 @@ from handling most of the things I was after.
 
 ## TODO
 
+- Work out where the logs go - for windows especially
+- Fix the config file path
+- Modify the pipeline to run less often
 - On Lose focus hide window
 - Wildcard search (ALL?)
 - Allow searching across multiple fields, just don't do the highlighting
