@@ -58,6 +58,12 @@ function handleKeyUp(event: KeyboardEvent) {
     event.key === field.shortcut
   ) {
     isActive = false
+  }
+  if (
+    ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
+      (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey)) &&
+    event.key === field.shortcut
+  ) {
     writeText(field.value).then()
     notify({
       title: 'Searcher-RS',
