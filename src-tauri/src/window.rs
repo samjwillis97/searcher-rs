@@ -197,8 +197,8 @@ pub fn show_info_window(app: &AppHandle, config: &config::Config, id: &str, titl
             WindowUrl::App(("/info/".to_string() + id).into()),
         )
         .title(title)
-        // .min_inner_size(450.0, 500.0)
         .max_inner_size(455.0, 500.0)
+        .transparent(true)
         .build()
         .expect("Unable to build window for updater")
     };

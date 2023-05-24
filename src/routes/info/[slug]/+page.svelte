@@ -24,7 +24,7 @@ get_config(true).then((value) => {
 
 getInfo(data.id).then((v) => {
   fields = v
-  resizeInfoWindow((v.length + 1) * 45.25 + 10).then()
+  resizeInfoWindow((v.length + 1) * 36).then()
 })
 
 function handleKeyUp(event: KeyboardEvent) {
@@ -46,11 +46,13 @@ onDestroy(() => {
 })
 </script>
 
-<main style="height: 100%;" class="bg-zinc-300">
-  <div class="col-auto mx-2">
+<main style="height: 100%;" class="bg-zinc-900 bg-opacity-95">
+  <div class="col-auto">
     {#each fields as field}
       {#if field.value}
-        <FieldRow field="{field}" />
+        <div class="border-b border-zinc-500 border-opacity-50 last:border-0">
+          <FieldRow field="{field}" />
+        </div>
       {/if}
     {/each}
   </div>

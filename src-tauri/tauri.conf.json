@@ -62,7 +62,7 @@
         "height": 96,
         "resizable": true,
         "transparent": true,
-        "skipTaskbar": false,
+        "skipTaskbar": true,
         "title": "searcher",
         "width": 640
       }

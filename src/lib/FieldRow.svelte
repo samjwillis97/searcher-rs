@@ -3,10 +3,12 @@ import { writeText } from '@tauri-apps/api/clipboard'
 import type { Field } from '../services/searcher'
 import { get_config, type Config } from '../services/config'
 import { notify } from '../services/notifications'
-import { onMount } from 'svelte'
+import { onDestroy, onMount } from 'svelte'
 
 export let field: Field
 let clicked = false
+
+let isActive = false
 
 let config: Config
 get_config(true).then((value) => {
@@ -31,11 +33,23 @@ function handleValueClick(field: string, value: string) {
 
 onMount(() => {
   document.addEventListener('keyup', handleKeyUp)
+  document.addEventListener('keydown', handleKeyDown)
 })
 
-onMount(() => {
+onDestroy(() => {
   document.removeEventListener('keyup', handleKeyUp)
+  document.removeEventListener('keydown', handleKeyDown)
 })
+
+function handleKeyDown(event: KeyboardEvent) {
+  if (
+    field.shortcut === event.key &&
+    ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
+      (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey))
+  ) {
+    isActive = true
+  }
+}
 
 function handleKeyUp(event: KeyboardEvent) {
   if (
@@ -43,6 +57,7 @@ function handleKeyUp(event: KeyboardEvent) {
     ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
       (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey))
   ) {
+    isActive = false
     writeText(field.value).then()
     notify({
       title: 'Searcher-RS',
@@ -52,39 +67,46 @@ function handleKeyUp(event: KeyboardEvent) {
 }
 </script>
 
-<div class="row my-2">
+<div class="row text-sm font-light text-zinc-200">
   <div class="text-l flex w-full">
-    <div class="flex w-32 justify-end">
-      <div
-        class="flex w-full justify-end rounded-md border-blue-500 bg-blue-500 p-2"
-      >
+    <div
+      class="flex w-32 justify-end border-r border-zinc-500 border-opacity-50"
+    >
+      <div class="flex w-full justify-end pr-3">
         <span class="inline-block select-none self-center">{field.name}</span>
       </div>
     </div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- TODO: hover:transition, active:border-blue etc. -->
     <div
       on:click="{() => {
         handleValueClick(field.name, field.value)
       }}"
-      class="ml-2 flex grow cursor-pointer justify-between rounded-md border border-stone-900 bg-stone-900 p-2 text-zinc-300 hover:border-blue-700 hover:transition active:border-blue-900"
+      class="flex grow rounded-md px-1 py-1 "
     >
-      <span class="select-none self-center overflow-hidden text-ellipsis"
-        >{field.value}</span
+      <div
+        class="flex grow cursor-pointer justify-between rounded px-2 py-1 font-medium hover:bg-zinc-700 hover:bg-opacity-20 active:bg-zinc-600 active:bg-opacity-20"
+        class:bg-zinc-600="{isActive}"
+        class:bg-opacity-20="{isActive}"
       >
-      {#if field.shortcut}
-        <div class="flex select-none">
-          <div
-            class="rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
-          >
-            <span>{config?.app_settings?.modifier_key}</span>
+        <span class="select-none self-center overflow-hidden text-ellipsis"
+          >{field.value}</span
+        >
+        {#if field.shortcut}
+          <div class="flex select-none">
+            <div
+              class="rounded-md border border-zinc-500 border-opacity-50 bg-zinc-900 bg-opacity-95 px-2 py-0"
+            >
+              <span>{config?.app_settings?.modifier_key}</span>
+            </div>
+            <div
+              class="ml-1.5 rounded-md border border-zinc-500  border-opacity-50 bg-zinc-900 bg-opacity-95 px-2"
+            >
+              <span>{field.shortcut}</span>
+            </div>
           </div>
-          <div
-            class="ml-1 rounded-md border border-stone-600 bg-stone-900 py-0 px-2"
-          >
-            <span>{field.shortcut}</span>
-          </div>
-        </div>
-      {/if}
+        {/if}
+      </div>
     </div>
   </div>
 </div>

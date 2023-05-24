@@ -88,7 +88,7 @@ function handleKeyUp(event: KeyboardEvent) {
       }
       break
     case 'Enter':
-      if (!service) {
+      if (!service && items[currentSelection]) {
         openService(items[currentSelection].id).then()
       } else {
         openInfo(items[currentSelection].id).then()
