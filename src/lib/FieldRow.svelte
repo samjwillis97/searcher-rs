@@ -53,9 +53,9 @@ function handleKeyDown(event: KeyboardEvent) {
 
 function handleKeyUp(event: KeyboardEvent) {
   if (
-    field.shortcut === event.key &&
-    ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
-      (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey))
+    (config?.app_settings?.modifier_key == 'Cmd' && event.key === 'Meta') ||
+    (config?.app_settings?.modifier_key == 'Ctrl' && event.key === 'Ctrl') ||
+    event.key === field.shortcut
   ) {
     isActive = false
     writeText(field.value).then()

@@ -33,10 +33,9 @@ onDestroy(() => {
 function handleKeyUp(event: KeyboardEvent) {
   if (service == '') {
     if (
-      ((config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
-        (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey)) &&
-      shortcut &&
-      event.key === shortcut
+      (config?.app_settings?.modifier_key == 'Cmd' && event.metaKey) ||
+      (config?.app_settings?.modifier_key == 'Ctrl' && event.ctrlKey) ||
+      (shortcut && event.key === shortcut)
     ) {
       isActive = false
     }
