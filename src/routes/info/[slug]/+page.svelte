@@ -24,7 +24,7 @@ get_config(true).then((value) => {
 
 getInfo(data.id).then((v) => {
   fields = v
-  resizeInfoWindow((v.length + 1) * 36).then()
+  resizeInfoWindow((v.length + 1) * 36 - 4).then()
 })
 
 function handleKeyUp(event: KeyboardEvent) {
