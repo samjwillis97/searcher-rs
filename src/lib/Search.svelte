@@ -15,6 +15,7 @@ const dispatch = createEventDispatcher()
 
 async function onInput() {
   search(service, searchValue).then((v) => {
+    console.log(v)
     dispatch('newValues', {
       values: v,
     })

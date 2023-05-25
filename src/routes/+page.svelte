@@ -39,7 +39,7 @@ function handleNewValues(event: CustomEvent) {
     shortcuts = []
     const services = [...searchServicesShortcutMap.values()]
     for (let i = 0; i < items.length; i++) {
-      const service = services.find((value) => value.name === items[i].value)
+      const service = services.find((value) => value.name === items[i].value[0])
       if (service) {
         shortcuts.push(service.shortcut)
       } else {

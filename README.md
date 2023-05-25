@@ -18,7 +18,6 @@ from handling most of the things I was after.
 ## TODO
 
 - Work out where the logs go - for windows especially
-- Fix the config file path
 - Modify the pipeline to run less often
 - On Lose focus hide window
 - Wildcard search (ALL?)
@@ -27,6 +26,7 @@ from handling most of the things I was after.
 
 ## Completed
 
+- Fix the config file path
 - initial search will search the configs
 - Screen position of the search bar in config
 - Application starts (on startup) to system tray

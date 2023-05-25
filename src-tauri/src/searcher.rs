@@ -12,7 +12,8 @@ use calamine::{open_workbook, DataType, Reader, Xlsx};
 #[derive(Debug)]
 pub struct InnerData {
     pub id: String,
-    pub data: HashMap<String, HashMap<String, String>>,
+    pub search_data: Vec<(Vec<String>, HashMap<String, String>)>,
+    pub lookup_data: HashMap<String, HashMap<String, String>>,
 }
 
 #[derive(Debug)]
@@ -23,7 +24,6 @@ pub fn search_service(
     service: &config::SearchServiceConfig,
     search_state: &tauri::State<DataState>,
 ) -> Vec<cmd::SearchResult> {
-    get_service_data(&service, search_state);
     return search_data(term, search_state);
 }
 
@@ -33,41 +33,58 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
 
     let guarded_state = search_state.0.lock().unwrap();
 
-    println!("total rows: {}", &guarded_state.data.len());
-    for row in &guarded_state.data {
-        match matcher.fuzzy_indices(row.0, term) {
-            Some((score, indices)) => {
-                // TODO: Check score here
-                // TODO: Value may be different
-                let result = cmd::SearchResult {
-                    id: row.0.to_string(),
-                    value: row.0.to_string(),
-                    indices,
-                    score,
-                };
-                if search_results.len() > 0 {
-                    if score >= search_results.first().unwrap().score {
-                        search_results.insert(0, result)
-                    } else if score <= search_results.last().unwrap().score {
-                        search_results.push(result);
-                    } else {
-                        // TODO: Could change this to a more efficient insert
-                        for (i, v) in search_results.iter().enumerate() {
-                            if v.score < score {
-                                search_results.insert(i, result);
-                                break;
-                            }
-                        }
+    // TODO: thinking if multiple fields are search return each of them as a seperate value kinda
+    let _ = &guarded_state.search_data.iter().for_each(|row| {
+        let mut values: Vec<String> = Vec::new();
+        let mut indices: Vec<Vec<usize>> = Vec::new();
+        let mut id: String = "".to_string();
+        let mut score: i64 = 0;
+
+        row.0.iter().for_each(
+            |search_value| match matcher.fuzzy_indices(&search_value, term) {
+                Some((value_score, value_indices)) => {
+                    if search_value.is_empty() {
+                        return;
                     }
-                } else {
-                    search_results.push(result);
+                    values.push(search_value.to_string());
+                    indices.push(value_indices);
+                    score += value_score;
+                    id.push_str(&search_value.to_string());
+                }
+                None => {}
+            },
+        );
+
+        if values.len() == 0 {
+            return;
+        }
+
+        let result = cmd::SearchResult {
+            id: "fuckin_id".to_string(),
+            value: values,
+            indices,
+            score,
+        };
+
+        // This inserts the result into the result array in the correct spot
+        if search_results.len() > 0 {
+            if score >= search_results.first().unwrap().score {
+                search_results.insert(0, result)
+            } else if score <= search_results.last().unwrap().score {
+                search_results.push(result);
+            } else {
+                // TODO: Could change this to a more efficient insert
+                for (i, v) in search_results.iter().enumerate() {
+                    if v.score < score {
+                        search_results.insert(i, result);
+                        break;
+                    }
                 }
             }
-            None => {}
-        };
-    }
-
-    println!("total results: {}", search_results.len());
+        } else {
+            search_results.push(result);
+        }
+    });
 
     return search_results;
 }
@@ -101,6 +118,7 @@ fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::
         .to_string();
 
     if let Some(Ok(r)) = excel.worksheet_range(&sheet_name) {
+        // A vector containing the names of the columns to be searched
         let mut search_keys: Vec<String> = Vec::new();
         for field in &service.file_settings.fields {
             if field.search.unwrap_or(false) {
@@ -108,8 +126,12 @@ fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::
             }
         }
 
+        // Array containing the locations for each column/field in the CSV
         let mut field_locations: Vec<(String, i32)> = Vec::new();
-        let mut row_data_map: HashMap<String, HashMap<String, String>> = HashMap::new();
+
+        // What is stored inside of the guarded_state
+        let mut lookup_values: HashMap<String, HashMap<String, String>> = HashMap::new();
+        let mut search_values: Vec<(Vec<String>, HashMap<String, String>)> = Vec::new();
 
         r.rows()
             .skip(
@@ -127,32 +149,38 @@ fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::
                     return;
                 }
 
+                let mut row_search_values: Vec<String> = Vec::new();
                 let mut row_map: HashMap<String, String> = HashMap::new();
-                let mut search_key: String = "".to_owned();
 
                 field_locations.to_owned().into_iter().for_each(|field| {
                     let value = xlsx_datatype_to_string(&row[field.1 as usize]);
                     if search_keys.contains(&field.0) {
-                        search_key.push_str(&value);
+                        row_search_values.push(value.to_owned());
                     }
                     row_map.insert(field.0.to_string(), value);
                 });
-
-                if search_key != "" {
-                    row_data_map.insert(search_key, row_map);
+                if row_search_values.len() > 0 {
+                    search_values.push((row_search_values.to_owned(), row_map.to_owned()));
                 }
+                row_search_values.iter().for_each(|v| {
+                    lookup_values.insert(v.to_string(), row_map.to_owned());
+                });
             });
 
         let data = InnerData {
             id: service.name.to_string(),
-            data: row_data_map,
+            search_data: search_values,
+            lookup_data: lookup_values,
         };
         let mut search_state_guard = search_state.0.lock().unwrap();
         *search_state_guard = data;
     }
 }
 
-fn get_service_data(service: &config::SearchServiceConfig, search_state: &tauri::State<DataState>) {
+pub(crate) fn get_service_data(
+    service: &config::SearchServiceConfig,
+    search_state: &tauri::State<DataState>,
+) {
     if !std::path::Path::new(&service.file_settings.source_file).exists() {
         // TODO: Send an error event to the UI
         println!("File does not exist {:}", service.file_settings.source_file);
@@ -160,15 +188,11 @@ fn get_service_data(service: &config::SearchServiceConfig, search_state: &tauri:
     }
 
     // TODO: Clear State on change of service
-    let state_guard = search_state.0.lock().unwrap();
-    if state_guard.data.len() == 0 {
-        drop(state_guard);
-        match service.file_settings.file_type.as_str() {
-            "xlsx" => {
-                println!("Parsing XLSX File");
-                parse_xlsx_file(service, search_state);
-            }
-            _ => println!("Do not know file type"),
-        };
-    }
+    match service.file_settings.file_type.as_str() {
+        "xlsx" => {
+            println!("Parsing XLSX File");
+            parse_xlsx_file(service, search_state);
+        }
+        _ => println!("Do not know file type"),
+    };
 }

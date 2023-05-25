@@ -107,7 +107,7 @@ fn main() {
             // Load user settings
             app.manage(config_clone.clone());
             // Set Initial value for state
-            app.manage(DataState( Mutex::new(InnerData{ id: "".to_string(), data: HashMap::new()}) ));
+            app.manage(DataState( Mutex::new(InnerData{ id: "".to_string(), search_data: Vec::new(), lookup_data: HashMap::new()}) ));
 
             // Register global shortcut
             let user_settings = config.user_settings.unwrap_or(config::UserSettings::default()).clone();

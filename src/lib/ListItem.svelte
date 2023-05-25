@@ -68,21 +68,25 @@ async function handleClick(event: MouseEvent) {
 
 // TODO: Handle keyup and keydown for nice lil highlight
 
-function generateHtmlString(item: SearchResult): String {
+function generateHtmlString(item: SearchResult): string {
   if (!item) return ''
   return item.value
-    .split('')
-    .map((val, i) => {
-      if (val === ' ') {
-        val = '&nbsp;'
-      }
-      if (item.indices.includes(i)) {
-        return `<b>${val}</b>`
-      } else {
-        return val
-      }
+    .map((v, i) => {
+      return v
+        .split('')
+        .map((val, j) => {
+          if (val === ' ') {
+            val = '&nbsp;'
+          }
+          if (item.indices[i].includes(j)) {
+            return `<b>${val}</b>`
+          } else {
+            return val
+          }
+        })
+        .join('')
     })
-    .join('')
+    .join('  -  ')
 }
 </script>
 

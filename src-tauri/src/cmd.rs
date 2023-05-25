@@ -2,6 +2,7 @@ use crate::config;
 use crate::constants;
 use crate::event::ClientEvent;
 use crate::searcher;
+use crate::searcher::get_service_data;
 use crate::window;
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -12,8 +13,8 @@ use tauri::Manager;
 #[derive(Deserialize, Serialize, Debug)]
 pub struct SearchResult {
     pub id: String,
-    pub value: String,
-    pub indices: Vec<usize>,
+    pub value: Vec<String>,
+    pub indices: Vec<Vec<usize>>,
     pub score: i64,
 }
 
@@ -45,9 +46,9 @@ pub fn search(
                 Some((score, indices)) => {
                     let result = SearchResult {
                         id: service.name.to_string(),
-                        value: service.name.to_string(),
-                        indices: indices,
-                        score: score,
+                        value: vec![service.name.to_string()],
+                        indices: vec![indices],
+                        score,
                     };
                     search_results.push(result);
                 }
@@ -73,11 +74,22 @@ pub fn get_list() -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn open_service(app: AppHandle, window: tauri::Window, service: &str) {
+pub fn open_service(
+    app: AppHandle,
+    window: tauri::Window,
+    service: &str,
+    config: tauri::State<config::Config>,
+    search_state: tauri::State<searcher::DataState>,
+) {
     println!("Lets Open {}", service);
     let _ = window.emit(ClientEvent::ClearSearch.as_ref(), true);
     let _ = window.emit(ClientEvent::SetService.as_ref(), service.to_string());
     let _ = window.emit(ClientEvent::FocusSearch.as_ref(), true);
+    for config_service in &config.search_services {
+        if service == config_service.name {
+            get_service_data(config_service, &search_state);
+        }
+    }
 }
 
 #[tauri::command]
@@ -111,7 +123,7 @@ pub fn get_info(
     let mut vec = Vec::new();
     let guarded_state = search_state.0.lock().unwrap();
 
-    let row = match guarded_state.data.get(id) {
+    let row = match guarded_state.lookup_data.get(id) {
         Some(v) => v,
         None => return vec,
     };
