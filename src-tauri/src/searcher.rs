@@ -60,7 +60,16 @@ fn search_data(term: &str, search_state: &tauri::State<DataState>) -> Vec<cmd::S
         }
 
         let result = cmd::SearchResult {
-            id: "fuckin_id".to_string(),
+            id: values
+                .iter()
+                .fold("".to_string(), |cur, nxt| {
+                    if cur.is_empty() {
+                        nxt.to_string()
+                    } else {
+                        cur + " - " + nxt
+                    }
+                })
+                .to_owned(),
             value: values,
             indices,
             score,
@@ -162,9 +171,20 @@ fn parse_xlsx_file(service: &config::SearchServiceConfig, search_state: &tauri::
                 if row_search_values.len() > 0 {
                     search_values.push((row_search_values.to_owned(), row_map.to_owned()));
                 }
-                row_search_values.iter().for_each(|v| {
-                    lookup_values.insert(v.to_string(), row_map.to_owned());
-                });
+
+                lookup_values.insert(
+                    row_search_values
+                        .iter()
+                        .fold("".to_string(), |cur, nxt| {
+                            if cur.is_empty() {
+                                nxt.to_string()
+                            } else {
+                                cur + " - " + nxt
+                            }
+                        })
+                        .to_owned(),
+                    row_map.to_owned(),
+                );
             });
 
         let data = InnerData {
