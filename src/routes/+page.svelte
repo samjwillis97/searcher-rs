@@ -121,12 +121,16 @@ function handleKeyDown(event: KeyboardEvent) {
       event.preventDefault()
       break
     case 'n':
-      if (event.ctrlKey) selectNext()
-      event.preventDefault()
+      if (event.ctrlKey) {
+        selectNext()
+        event.preventDefault()
+      }
       break
     case 'p':
-      if (event.ctrlKey) selectPrevious()
-      event.preventDefault()
+      if (event.ctrlKey) {
+        selectPrevious()
+        event.preventDefault()
+      }
       break
   }
 }

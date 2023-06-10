@@ -18,7 +18,6 @@ from handling most of the things I was after.
 ## TODO
 
 - Taskbar Icon
-- `n` and `p` are not enterable in the search
 - Work out where the logs go - for windows especially
 - Modify the pipeline to run less often
 - On Lose focus hide window
