@@ -17,7 +17,7 @@ from handling most of the things I was after.
 
 ## TODO
 
-- Taskbar Icon
+- Info window doesn't work once built might need to consult the discord 😥
 - Work out where the logs go - for windows especially
 - Modify the pipeline to run less often
 - On Lose focus hide window

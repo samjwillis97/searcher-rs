@@ -1,5 +1,4 @@
 <script lang="ts">
-export const prerender = 'auto'
 import type { Field } from 'src/services/searcher'
 
 import { get_config, type Config } from '../../../services/config'

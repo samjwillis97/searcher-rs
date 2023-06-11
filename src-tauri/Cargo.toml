@@ -21,7 +21,7 @@ directories = "4.0.1"
 anyhow = "1.0.65"
 auto-launch = "0.4.0"
 tokio = "1"
-tauri = { version = "1.1", features = ["api-all", "macos-private-api"] }
+tauri = { version = "1.1", features = ["api-all", "macos-private-api", "system-tray"] }
 strum = "0.24"
 strum_macros = "0.24"
 fuzzy-matcher = "*"

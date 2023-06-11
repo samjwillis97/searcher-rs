@@ -22,6 +22,7 @@ mod config;
 mod constants;
 mod event;
 mod searcher;
+mod tray;
 mod window;
 
 #[derive(Clone)]
@@ -72,6 +73,8 @@ fn main() {
                 cmd::close_window,
             ]
         )
+        .system_tray(tray::new())
+        .on_system_tray_event(|app, event| tray::event_handler(app, event))
         .setup(move |app| {
             let app_handle = app.app_handle();
             // TODO: Show startup

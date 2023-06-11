@@ -1,4 +1,4 @@
-import staticAdapter from '@sveltejs/adapter-static'
+import adapter from '@sveltejs/adapter-static' // This was changed from adapter-auto
 import preprocess from 'svelte-preprocess'
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -12,7 +12,7 @@ const config = {
   ],
 
   kit: {
-    adapter: staticAdapter(),
+    adapter: adapter(),
     prerender: {
       entries: ['/', '/info/[slug]'],
     },
