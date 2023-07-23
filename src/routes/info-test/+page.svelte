@@ -1,18 +1,17 @@
 <script lang="ts">
-import type { Field } from 'src/services/searcher'
+import type { Field } from '../../services/searcher'
 
-import { get_config, type Config } from '../../../services/config'
-import {
-  getInfo,
-  resizeInfoWindow,
-  openPreviousService,
-  closeWindow,
-} from '../../../services/commands'
-import type { InfoData } from './+page'
-import FieldRow from '$lib/FieldRow.svelte'
 import { onDestroy, onMount } from 'svelte'
+import {
+  closeWindow,
+  getInfo,
+  openPreviousService,
+  resizeInfoWindow,
+} from '../../services/commands'
+import { get_config, type Config } from '../../services/config'
+import FieldRow from '$lib/FieldRow.svelte'
 
-export let data: InfoData
+const id: string | null = new URLSearchParams(window.location.search).get('id')
 
 let fields: Field[] = []
 
@@ -21,10 +20,12 @@ get_config(true).then((value) => {
   config = value
 })
 
-getInfo(data.id).then((v) => {
-  fields = v
-  resizeInfoWindow((v.length + 1) * 36 - 4).then()
-})
+if (id) {
+  getInfo(id).then((v) => {
+    fields = v
+    resizeInfoWindow((v.length + 1) * 36 - 4).then()
+  })
+}
 
 function handleKeyUp(event: KeyboardEvent) {
   if (event.key === 'Escape') {

@@ -194,7 +194,7 @@ pub fn show_info_window(app: &AppHandle, config: &config::Config, id: &str, titl
         WindowBuilder::new(
             app,
             constants::INFO_WIN_NAME,
-            WindowUrl::App(("/info/".to_string() + id).into()),
+            WindowUrl::App(("/info-test?id=".to_string() + id).into()),
         )
         .title(title)
         .max_inner_size(455.0, 500.0)

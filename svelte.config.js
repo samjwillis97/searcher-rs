@@ -20,7 +20,7 @@ const config = {
       strict: true
      }),
     prerender: {
-      entries: ['/', '/info/[slug]'],
+      entries: ['/', '/info-test'],
     },
   },
 }
